@@ -147,6 +147,7 @@ class SettingsList extends React.Component {
       item.titleInfo ?
         <Text
             key={'itemTitleInfo_' + index}
+            numberOfLines={1}
             style={[
               item.rightSideStyle ? item.rightSideStyle
               :
