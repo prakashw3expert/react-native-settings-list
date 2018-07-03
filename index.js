@@ -75,7 +75,7 @@ class SettingsList extends React.Component {
         {this._getGroups().map((group, index) => {
           return this._groupView(group, index);
         })}
-        {this.props.renderFooter()}
+        {(this.props.renderFooter) && this.props.renderFooter()}
       </ScrollView>
     )
   }
