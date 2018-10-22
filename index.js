@@ -16,6 +16,10 @@ import {
   ViewPropTypes
 } from 'react-native';
 
+import I18n from 'react-native-i18n';
+const currentLocale = I18n.currentLocale();
+const isRTL = currentLocale.indexOf('he') === 0 || currentLocale.indexOf('ar') === 0;
+
 const ARROW_ICON = require('./img/icon-arrow-settings.png');
 
 class SettingsList extends React.Component {
@@ -84,7 +88,7 @@ class SettingsList extends React.Component {
     if(group.header){
       return (
         <View key={'group_' + index}>
-          <Text style={[{margin:5},group.header.headerStyle]} numberOfLines={group.header.headerNumberOfLines} ellipsizeMode="tail" ref={group.header.headerRef}>{group.header.headerText}</Text>
+          <Text style={[{margin:5, textAlign: (isRTL) ? 'right' : 'left', marginRight: (isRTL) ? 20 : 0},group.header.headerStyle]} numberOfLines={group.header.headerNumberOfLines} ellipsizeMode="tail" ref={group.header.headerRef}>{group.header.headerText}</Text>
           <View style={{borderTopWidth:1, borderBottomWidth:1, borderColor: this.props.borderColor}}>
             {group.items.map((item, index) => {
               return this._itemView(item,index, group.items.length);
@@ -135,6 +139,30 @@ class SettingsList extends React.Component {
   }
 
   _itemTitleBlock(item, index, position) {
+    if(isRTL){
+      return ([
+          <Text
+              key={'itemTitleInfo_' + index}
+              numberOfLines={1}
+              style={[
+                item.rightSideStyle ? item.rightSideStyle
+                :
+                  position === 'Bottom' ? null : styles.rightSide,
+                  {color: '#B1B1B1'},
+                item.titleInfoStyle
+              ]}>
+              {(item.titleInfo) ? item.titleInfo: ""}
+          </Text>,
+          <Text
+            key={'itemTitle_' + index}
+            style={[
+              item.titleStyle ? item.titleStyle : this.props.defaultTitleStyle,
+              position === 'Bottom' ? null : styles.titleText
+            ]}>
+            {item.title}
+        </Text>
+      ])
+    }
     return ([
       <Text
           key={'itemTitle_' + index}
@@ -143,21 +171,19 @@ class SettingsList extends React.Component {
             position === 'Bottom' ? null : styles.titleText
           ]}>
           {item.title}
-      </Text>,
-      item.titleInfo ?
+        </Text>,
         <Text
-            key={'itemTitleInfo_' + index}
-            numberOfLines={1}
-            style={[
-              item.rightSideStyle ? item.rightSideStyle
-              :
-                position === 'Bottom' ? null : styles.rightSide,
-                {color: '#B1B1B1'},
-              item.titleInfoStyle
-            ]}>
-            {item.titleInfo}
-        </Text>
-        : null
+          key={'itemTitleInfo_' + index}
+          numberOfLines={1}
+          style={[
+            item.rightSideStyle ? item.rightSideStyle
+            :
+              position === 'Bottom' ? null : styles.rightSide,
+              {color: '#B1B1B1'},
+            item.titleInfoStyle
+          ]}>
+          {(item.titleInfo) ? item.titleInfo: ""}
+      </Text>
     ])
   }
 
@@ -182,7 +208,7 @@ class SettingsList extends React.Component {
     return (
       <TouchableHighlight accessible={false} key={'item_' + index} underlayColor={item.underlayColor ? item.underlayColor : this.props.underlayColor} onPress={item.onPress} onLongPress={item.onLongPress} ref={item.itemRef}>
         <View style={item.itemBoxStyle ? item.itemBoxStyle : [styles.itemBox, {backgroundColor: item.backgroundColor ? item.backgroundColor : this.props.backgroundColor}]}>
-          {item.icon}
+        {(!isRTL) ? item.icon : null}
           {item.isAuth ?
             <View style={item.titleBoxStyle ? item.titleBoxStyle : [styles.titleBox, border]}>
               <View style={{paddingLeft:5,flexDirection:'column',flex:1}}>
@@ -210,23 +236,31 @@ class SettingsList extends React.Component {
             </View>
           :
           <View style={item.titleBoxStyle ? item.titleBoxStyle : [styles.titleBox, border, {minHeight:item.itemWidth ? item.itemWidth : this.props.defaultItemSize}]}>
-            {titleInfoPosition === 'Bottom' ?
-                <View style={{flexDirection:'column',flex:1,justifyContent:'center'}}>
-                    {item.isEditable ? this._itemEditableBlock(item, inde, 'Bottom') : this._itemTitleBlock(item, index, 'Bottom')}
-                </View>
-              : item.isEditable ? this._itemEditableBlock(item, index) : this._itemTitleBlock(item, index)}
+            {(isRTL) ? this.itemArrowIcon(item): null}
 
-            {item.rightSideContent ? item.rightSideContent : null}
-            {item.hasSwitch ?
+            {(isRTL && item.hasSwitch) ?
               <Switch
                 {...item.switchProps}
                 style={styles.rightSide}
                 onValueChange={(value) => item.switchOnValueChange(value)}
                 value={item.switchState}/>
                 : null}
-            {this.itemArrowIcon(item)}
+            {titleInfoPosition === 'Bottom' ?
+                <View style={{flexDirection:'column',flex:1,justifyContent:'center'}}>
+                    {item.isEditable ? this._itemEditableBlock(item, inde, 'Bottom') : this._itemTitleBlock(item, index, 'Bottom')}
+                </View>
+              : item.isEditable ? this._itemEditableBlock(item, index) : this._itemTitleBlock(item, index)}
+            {(item.hasSwitch && !isRTL) ?
+              <Switch
+                {...item.switchProps}
+                style={styles.rightSide}
+                onValueChange={(value) => item.switchOnValueChange(value)}
+                value={item.switchState}/>
+                : null}
+            {(!isRTL) ? this.itemArrowIcon(item): null}
           </View>
         }
+        {(isRTL) ? item.icon : null}
         </View>
       </TouchableHighlight>
     )
@@ -238,7 +272,7 @@ class SettingsList extends React.Component {
     }
 
     if(item.hasNavArrow){
-        return <Image style={[styles.rightSide, item.arrowStyle]} source={ARROW_ICON} />;
+        return <Image style={[styles.rightSide, item.arrowStyle, {transform: [{ rotate: (isRTL) ? '180deg': '0deg'}]}]} source={ARROW_ICON} />;
     }
 
     return null;
@@ -250,7 +284,8 @@ const styles = StyleSheet.create({
   itemBox: {
     flex:1,
     justifyContent:'center',
-    flexDirection:'row'
+    flexDirection:'row',
+    marginRight: (isRTL) ? 20 : 0
   },
   titleBox: {
     flex:1,
