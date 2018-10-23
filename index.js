@@ -16,10 +16,6 @@ import {
   ViewPropTypes
 } from 'react-native';
 
-import I18n from 'react-native-i18n';
-const currentLocale = I18n.currentLocale();
-const isRTL = currentLocale.indexOf('he') === 0 || currentLocale.indexOf('ar') === 0;
-
 const ARROW_ICON = require('./img/icon-arrow-settings.png');
 
 class SettingsList extends React.Component {
@@ -86,6 +82,7 @@ class SettingsList extends React.Component {
 
   _groupView(group, index){
     if(group.header){
+      const {isRTL} = group.header
       return (
         <View key={'group_' + index}>
           <Text style={[{margin:5, textAlign: (isRTL) ? 'right' : 'left', marginRight: (isRTL) ? 20 : 0},group.header.headerStyle]} numberOfLines={group.header.headerNumberOfLines} ellipsizeMode="tail" ref={group.header.headerRef}>{group.header.headerText}</Text>
@@ -139,6 +136,7 @@ class SettingsList extends React.Component {
   }
 
   _itemTitleBlock(item, index, position) {
+    const {isRTL} =  item;
     if(isRTL){
       return ([
           <Text
@@ -189,7 +187,8 @@ class SettingsList extends React.Component {
 
   _itemView(item, index, max){
     var border;
-
+    const {isRTL} =  item;
+    
     if (item.type && item.type.displayName) {
         return item;
     }
@@ -207,7 +206,7 @@ class SettingsList extends React.Component {
 
     return (
       <TouchableHighlight accessible={false} key={'item_' + index} underlayColor={item.underlayColor ? item.underlayColor : this.props.underlayColor} onPress={item.onPress} onLongPress={item.onLongPress} ref={item.itemRef}>
-        <View style={item.itemBoxStyle ? item.itemBoxStyle : [styles.itemBox, {backgroundColor: item.backgroundColor ? item.backgroundColor : this.props.backgroundColor}]}>
+        <View style={item.itemBoxStyle ? item.itemBoxStyle : [styles.itemBox, {backgroundColor: item.backgroundColor ? item.backgroundColor : this.props.backgroundColor, marginRight: (isRTL) ? 20 : 0}]}>
         {(!isRTL) ? item.icon : null}
           {item.isAuth ?
             <View style={item.titleBoxStyle ? item.titleBoxStyle : [styles.titleBox, border]}>
@@ -272,7 +271,7 @@ class SettingsList extends React.Component {
     }
 
     if(item.hasNavArrow){
-        return <Image style={[styles.rightSide, item.arrowStyle, {transform: [{ rotate: (isRTL) ? '180deg': '0deg'}]}]} source={ARROW_ICON} />;
+        return <Image style={[styles.rightSide, item.arrowStyle, {transform: [{ rotate: (item.isRTL) ? '180deg': '0deg'}]}]} source={ARROW_ICON} />;
     }
 
     return null;
@@ -285,7 +284,7 @@ const styles = StyleSheet.create({
     flex:1,
     justifyContent:'center',
     flexDirection:'row',
-    marginRight: (isRTL) ? 20 : 0
+    // marginRight: (isRTL) ? 20 : 0
   },
   titleBox: {
     flex:1,
