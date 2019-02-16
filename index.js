@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 
 const ARROW_ICON = require('./img/icon-arrow-settings.png');
+const TICK_ICON = require('./img/tick.png');
 
 class SettingsList extends React.Component {
   static propTypes = {
@@ -139,18 +140,21 @@ class SettingsList extends React.Component {
     const {isRTL} =  item;
     if(isRTL){
       return ([
-          <Text
-              key={'itemTitleInfo_' + index}
-              numberOfLines={1}
-              style={[
-                item.rightSideStyle ? item.rightSideStyle
-                :
-                  position === 'Bottom' ? null : styles.rightSide,
-                  {color: '#B1B1B1'},
-                item.titleInfoStyle
-              ]}>
-              {(item.titleInfo) ? item.titleInfo: ""}
-          </Text>,
+        (item.titleInfo) ? 
+        <Image style={[styles.tickIcon, item.arrowStyle]} source={TICK_ICON} resizeMode='contain' />
+        : null,
+          // <Text
+          //     key={'itemTitleInfo_' + index}
+          //     numberOfLines={1}
+          //     style={[
+          //       item.rightSideStyle ? item.rightSideStyle
+          //       :
+          //         position === 'Bottom' ? null : styles.rightSide,
+          //         {color: '#B1B1B1'},
+          //       item.titleInfoStyle
+          //     ]}>
+          //     {(item.titleInfo) ? item.titleInfo: ""}
+          // </Text>,
           <Text
             key={'itemTitle_' + index}
             style={[
@@ -170,18 +174,21 @@ class SettingsList extends React.Component {
           ]}>
           {item.title}
         </Text>,
-        <Text
-          key={'itemTitleInfo_' + index}
-          numberOfLines={1}
-          style={[
-            item.rightSideStyle ? item.rightSideStyle
-            :
-              position === 'Bottom' ? null : styles.rightSide,
-              {color: '#B1B1B1'},
-            item.titleInfoStyle
-          ]}>
-          {(item.titleInfo) ? item.titleInfo: ""}
-      </Text>
+        (item.titleInfo) ? 
+          <Image style={[styles.tickIcon, item.arrowStyle]} source={TICK_ICON} resizeMode='contain' />
+          : null
+      //   <Text
+      //     key={'itemTitleInfo_' + index}
+      //     numberOfLines={1}
+      //     style={[
+      //       item.rightSideStyle ? item.rightSideStyle
+      //       :
+      //         position === 'Bottom' ? null : styles.rightSide,
+      //         {color: '#B1B1B1'},
+      //       item.titleInfoStyle
+      //     ]}>
+      //     {(item.titleInfo) ? item.titleInfo: ""}
+      // </Text>
     ])
   }
 
@@ -297,7 +304,13 @@ const styles = StyleSheet.create({
   },
   rightSide: {
     marginRight:15,
-    alignSelf:'center'
+    alignSelf:'center',
+  },
+  tickIcon: {
+    marginRight:15,
+    alignSelf:'center',
+    height:12,
+    width: 17
   },
   editableText: {
     flex: 1,
