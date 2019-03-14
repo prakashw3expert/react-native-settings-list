@@ -140,9 +140,25 @@ class SettingsList extends React.Component {
     const {isRTL} =  item;
     if(isRTL){
       return ([
-        (item.titleInfo) ? 
-        <Image style={[styles.tickIcon, item.arrowStyle]} source={TICK_ICON} resizeMode='contain' />
-        : null,
+        (item.titleInfo) && !item.toTextShow ? 
+          <Image style={[styles.tickIcon, item.arrowStyle]} source={TICK_ICON} resizeMode='contain' />
+          : 
+          (item.titleInfo && item.toTextShow)
+          ?
+          <Text
+            key={'itemTitleInfo_' + index}
+            numberOfLines={1}
+            style={[
+              item.rightSideStyle ? item.rightSideStyle
+              :
+                position === 'Bottom' ? null : styles.rightSide,
+                {color: '#B1B1B1'},
+              item.titleInfoStyle
+            ]}>
+            {(item.titleInfo) ? item.titleInfo: ""}
+          </Text>
+          :
+          null,
           // <Text
           //     key={'itemTitleInfo_' + index}
           //     numberOfLines={1}
@@ -174,21 +190,25 @@ class SettingsList extends React.Component {
           ]}>
           {item.title}
         </Text>,
-        (item.titleInfo) ? 
+        (item.titleInfo) && !item.toTextShow ? 
           <Image style={[styles.tickIcon, item.arrowStyle]} source={TICK_ICON} resizeMode='contain' />
-          : null
-      //   <Text
-      //     key={'itemTitleInfo_' + index}
-      //     numberOfLines={1}
-      //     style={[
-      //       item.rightSideStyle ? item.rightSideStyle
-      //       :
-      //         position === 'Bottom' ? null : styles.rightSide,
-      //         {color: '#B1B1B1'},
-      //       item.titleInfoStyle
-      //     ]}>
-      //     {(item.titleInfo) ? item.titleInfo: ""}
-      // </Text>
+          : 
+          (item.titleInfo && item.toTextShow)
+          ?
+          <Text
+            key={'itemTitleInfo_' + index}
+            numberOfLines={1}
+            style={[
+              item.rightSideStyle ? item.rightSideStyle
+              :
+                position === 'Bottom' ? null : styles.rightSide,
+                {color: '#B1B1B1'},
+              item.titleInfoStyle
+            ]}>
+            {(item.titleInfo) ? item.titleInfo: ""}
+          </Text>
+          :
+          null
     ])
   }
 
